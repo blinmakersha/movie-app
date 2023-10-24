@@ -10,5 +10,21 @@
 		<a href="{{url_for('login')}}">Login</a><br />
 		<a href="{{url_for('register')}}">Register</a><br />
 		<a href="{{url_for('logout')}}">Press here to logout</a><br />
+		<div>
+			<form method="POST">
+				{{ form.hidden_tag() }}
+				<div>
+					<label>Name</label>
+					<p>{{ form.name }}</p>
+				</div>
+				<div>
+					<label>Email</label>
+					<p>{{ form.email }}</p>
+				</div>
+				<div>
+					<p>{{ form.submit }}</p>
+				</div>
+			</form>
+		</div>
 	</body>
 </html>

@@ -1,10 +1,13 @@
-from flask import Flask, redirect, render_template, url_for
+import smtplib
+
+from flask import Flask, flash, redirect, render_template, url_for
 from flask_bcrypt import Bcrypt
 from flask_login import (LoginManager, UserMixin, login_required, login_user,
                          logout_user)
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
-from wtforms import PasswordField, StringField, SubmitField
+from wtforms import EmailField, PasswordField, StringField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
 db = SQLAlchemy()
@@ -12,7 +15,14 @@ app = Flask(__name__)
 bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['MAIL_SERVER'] = "smtp.gmail.com"
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'newsletters.with.love@gmail.com'
+app.config['MAIL_PASSWORD'] = 'wdpj uywv jjkf xbom'
+
 db.init_app(app)
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -28,6 +38,12 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(80), nullable=False)
+
+
+class SendForm(FlaskForm):
+    name = StringField('Name')
+    email = EmailField('Email')
+    submit = SubmitField('Send')
 
 
 class RegisterFrom(FlaskForm):
@@ -54,9 +70,23 @@ class LoginFrom(FlaskForm):
     submit = SubmitField('Login')
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return render_template('home.html')
+    form = SendForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        subject = "Now, you are in our team!"
+        message_body = "Congratulations, now we will send you top movies every week! Thanks for being with us."
+        msg = Message(
+            subject, sender='newsletters.with.love@gmail.com', recipients=[email])
+        msg.body = message_body
+        try:
+            mail.send(msg)
+            flash('You have been subscribed to our email newsletters', 'success')
+        except Exception as e:
+            flash(f'Error sending email: {str(e)}', 'danger')
+        return redirect("/")
+    return render_template('home.html', form=form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
