@@ -58,6 +58,7 @@ class RegisterFrom(FlaskForm):
             username=username.data).first()
 
         if existing_username:
+            flash('This username already exists. Please try another one', 'danger')
             raise ValidationError(
                 'This username already exists. Please try another one')
 
@@ -97,7 +98,10 @@ def login():
         if user:
             if bcrypt.check_password_hash(user.password, form.password.data):
                 login_user(user)
+                flash('Login successful!', 'success')
                 return redirect(url_for('home'))
+            else:
+                flash('Login unsuccessful. Please check your username and password', 'danger')
     return render_template('login.html', form=form)
 
 
@@ -105,6 +109,7 @@ def login():
 @login_required
 def logout():
     logout_user()
+    flash('You have been logged out!', 'info')
     return redirect(url_for('home'))
 
 
@@ -116,6 +121,7 @@ def register():
         new_user = User(username=form.username.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
+        flash('Registration successful! You can now log in.', 'success')
         return redirect(url_for('login'))
     return render_template('register.html', form=form)
 

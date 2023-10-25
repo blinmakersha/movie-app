@@ -7,6 +7,13 @@
 	</head>
 	<body>
 		<h1>Quokka</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <p>{{msg}}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 		<a href="{{url_for('login')}}">Login</a><br />
 		<a href="{{url_for('register')}}">Register</a><br />
 		<a href="{{url_for('logout')}}">Press here to logout</a><br />
