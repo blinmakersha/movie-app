@@ -11,7 +11,8 @@ from wtforms import EmailField, PasswordField, StringField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
 db = SQLAlchemy()
-app = Flask(__name__)
+app = Flask(__name__,
+            static_url_path='/static')
 bcrypt = Bcrypt(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'mysecretkey'

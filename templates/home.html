@@ -4,9 +4,9 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Quokka</title>
+        <link rel="stylesheet" type="text/css" href="/static/style.css" />
 	</head>
 	<body>
-		<h1>Quokka</h1>
         {% with messages = get_flashed_messages() %}
             {% if messages %}
                 {% for msg in messages %}
@@ -14,9 +14,13 @@
                 {% endfor %}
             {% endif %}
         {% endwith %}
-		<a href="{{url_for('login')}}">Login</a><br />
-		<a href="{{url_for('register')}}">Register</a><br />
-		<a href="{{url_for('logout')}}">Press here to logout</a><br />
+        <nav class="nav">
+            <a href="{{url_for('home')}}" class="nav-item is-active" active-color="rebeccapurple">Home</a>
+            <a href="{{url_for('login')}}" class="nav-item" active-color="orange">Login</a>
+            <a href="{{url_for('register')}}" class="nav-item" active-color="green">Register</a>
+            <a href="{{url_for('logout')}}" class="nav-item" active-color="blue">Logout</a>
+            <span class="nav-indicator"></span>
+        </nav>
 		<div>
 			<form method="POST">
 				{{ form.hidden_tag() }}
